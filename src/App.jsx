@@ -11,12 +11,15 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 function App() {
+  const [locations, setLocations] = useState(null);
+  const [cat, setCat] = useState(null);
+  const [filter, setFilter] = useState([]);
   return (
     <div className="w-full min-h-screen bg-zinc-900 overflow-x-hidden">
       <Navbar />
       <Hero />
-      <JobSearchBar />
-      <JobCards />
+      <JobSearchBar locations={locations} cat={cat} />
+      <JobCards setLocations={setLocations} setCat={setCat} />
       <JobPortalFooter />
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, MapPin, Layers, Zap } from "lucide-react";
 
-const JobSearchBar = () => {
+const JobSearchBar = ({ locations, cat }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // State to store debounced value
   const [location, setLocation] = useState("");
@@ -69,10 +69,12 @@ const JobSearchBar = () => {
                 onChange={(e) => setLocation(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               >
-                <option value="">Location</option>
-                <option value="new-york">New York</option>
-                <option value="san-francisco">San Francisco</option>
-                <option value="london">London</option>
+                {locations &&
+                  locations.map((location) => (
+                    <option key={location} value={location}>
+                      {location}
+                    </option>
+                  ))}
               </select>
             </div>
           </div>
@@ -87,10 +89,12 @@ const JobSearchBar = () => {
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               >
-                <option value="">Category</option>
-                <option value="design">Design</option>
-                <option value="development">Development</option>
-                <option value="marketing">Marketing</option>
+                {cat &&
+                  cat.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
               </select>
             </div>
           </div>

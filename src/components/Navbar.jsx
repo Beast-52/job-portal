@@ -69,15 +69,22 @@ const Navbar = () => {
           <div className="flex flex-col items-center justify-center h-full space-y-8">
             {navItems.map((item, index) => (
               <div key={index} className="relative group cursor-pointer">
-                <span className="text-3xl text-zinc-300 group-hover:text-white transition-colors duration-300 tracking-wide">
-                  {item}
-                </span>
+               {index < 4 ? (
+                 <span className="text-3xl text-zinc-300 group-hover:text-white transition-colors duration-300 tracking-wide">
+                 {item}
+               </span>
+               ) : (
+                <Button item={item}/>
+               )}
                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg opacity-0 group-hover:opacity-10 transition duration-300 blur-lg"></div>
               </div>
             ))}
           </div>
           {isMenuOpen && (
-            <div className="space-y-1.5 absolute top-3 right-4 z-[9999]" onClick={()=>setIsMenuOpen(!isMenuOpen)}>
+            <div
+              className="space-y-1.5 absolute top-3 right-4 z-[9999]"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
               <Plus color="white" className="rotate-45" />
             </div>
           )}
