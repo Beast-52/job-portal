@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, Layers, Zap, Plus } from "lucide-react"; // Added Zap for the search button icon
+import { Search, MapPin, Layers, Zap, Plus } from "lucide-react";
 
 const JobSearchBar = ({
   locations,
@@ -11,47 +11,52 @@ const JobSearchBar = ({
   setFilteredCards,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [location, setLocation] = useState("");
-  const [category, setCategory] = useState("");
+  const [location, setLocation] = useState("Select Location");
+  const [category, setCategory] = useState("Select Category");
 
   // Debounce logic
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 500); // 1 second delay
+    }, 500);
 
     return () => {
-      clearTimeout(handler); // Cleanup the timeout on each render
+      clearTimeout(handler);
     };
   }, [searchTerm]);
 
   // Filter job cards based on the search term, location, and category
+  // Filter job cards based on the search term, location, and category
   useEffect(() => {
     const filtered = jobCards.filter((job) => {
+      // Check if searchTerm matches any of the fields
       const searchMatch =
-        job?.position
-          ?.toLowerCase()
-          ?.includes(debouncedSearchTerm?.toLowerCase()) ||
-        job?.company
-          ?.toLowerCase()
-          ?.includes(debouncedSearchTerm?.toLowerCase()) ||
-        job?.location
-          ?.toLowerCase()
-          ?.includes(debouncedSearchTerm?.toLowerCase()) ||
-        job?.level?.split('-').join(' ').toLowerCase()?.includes(debouncedSearchTerm?.toLowerCase());
+        searchTerm === "" || // Include all if searchTerm is empty
+        job?.position?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        job?.company?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        job?.location?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        job?.level
+          ?.split("-")
+          .join(" ")
+          .toLowerCase()
+          ?.includes(searchTerm.toLowerCase());
 
-      const locationMatch = location
-        ? job?.location?.toLowerCase()?.includes(location.toLowerCase())
-        : true;
+      // Check if location matches
+      const locationMatch =
+        location === "Select Location" || // Include all if location is default
+        job?.location?.toLowerCase() === location.toLowerCase();
 
-      const categoryMatch = category
-        ? job?.level?.toLowerCase()?.includes(category.toLowerCase())
-        : true;
+      // Check if category matches
+      const categoryMatch =
+        category === "Select Category" || // Include all if category is default
+        job?.level?.toLowerCase() === category.toLowerCase();
 
+      // Combine the conditions
       return searchMatch && locationMatch && categoryMatch;
     });
+
     setFilteredCards(filtered);
-  }, [debouncedSearchTerm, location, category]);
+  }, [searchTerm, location, category, jobCards]);
 
   return (
     <div className="relative max-w-6xl mx-auto px-4 py-12">
@@ -94,10 +99,11 @@ const JobSearchBar = ({
                 onChange={(e) => setLocation(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               >
+                <option>Select Location</option>
                 {locations &&
-                  locations.map((location) => (
-                    <option key={location} value={location}>
-                      {location}
+                  locations.map((loc) => (
+                    <option key={loc} value={loc}>
+                      {loc}
                     </option>
                   ))}
               </select>
@@ -114,6 +120,7 @@ const JobSearchBar = ({
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               >
+                <option>Select Category</option>
                 {cat &&
                   cat.map((c) => (
                     <option key={c} value={c}>
