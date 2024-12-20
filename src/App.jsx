@@ -3,7 +3,7 @@ import JobPortalFooter from "./components/Footer";
 import Hero from "./components/Hero";
 import JobSearchBar from "./components/JobSearchbar";
 import Navbar from "./components/Navbar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -233,10 +233,15 @@ function App() {
   ]);
   const [filteredCards, setFilteredCards] = useState([]);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // Debounced search term
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="w-full min-h-screen bg-zinc-900 overflow-x-hidden">
-      <Navbar />
+    <div
+      className={`w-full h-screen ${
+        isMenuOpen && "overflow-hidden " 
+      } bg-zinc-900 overflow-x-hidden`}
+    >
+      <Navbar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       <Hero />
       <JobSearchBar
         locations={locations}
