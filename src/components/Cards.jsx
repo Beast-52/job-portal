@@ -2,7 +2,14 @@ import React, { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Import Swiper styles
 
-const JobCards = ({ setLocations, setCat, jobCards, filteredCards,debouncedSearchTerm }) => {
+const JobCards = ({
+  setLocations,
+  setCat,
+  jobCards,
+  filteredCards,
+  debouncedSearchTerm,
+  setPos
+}) => {
   const levels = ["Senior Level", "Mid Level", "Entry Level"];
   const levelColors = {
     "Senior Level": "from-purple-600 to-pink-600",
@@ -12,15 +19,16 @@ const JobCards = ({ setLocations, setCat, jobCards, filteredCards,debouncedSearc
 
   // Extract unique locations into a new array
   const uniqueLocations = [...new Set(jobCards.map((job) => job.location))];
-  const uniqueCat = [...new Set(jobCards.map((job) => job.position))];
 
   useEffect(() => {
     setLocations(uniqueLocations);
-    setCat(uniqueCat);
+    setCat(levels);
+    setPos(()=>[...new Set(jobCards.map((job) => job.position))])
   }, [jobCards, setLocations, setCat]);
 
   // Determine which cards to render: filtered or all
-  const cardsToRender =  debouncedSearchTerm?.length > 0 ? filteredCards : jobCards;
+  const cardsToRender =
+    debouncedSearchTerm?.length > 0 ? filteredCards : jobCards;
 
   return (
     <div className="bg-[#121212] min-h-screen py-16 px-4 sm:px-6 lg:px-8">
@@ -64,7 +72,9 @@ const JobCards = ({ setLocations, setCat, jobCards, filteredCards,debouncedSearc
                               <h3 className="text-xl font-semibold text-white">
                                 {job.company}
                               </h3>
-                              <p className="text-zinc-400 text-sm">{job.location}</p>
+                              <p className="text-zinc-400 text-sm">
+                                {job.location}
+                              </p>
                             </div>
                           </div>
                           <div className="text-zinc-500 hover:text-red-500 cursor-pointer transition">
@@ -86,7 +96,9 @@ const JobCards = ({ setLocations, setCat, jobCards, filteredCards,debouncedSearc
                         </div>
 
                         <div className="space-y-4">
-                          <h2 className="text-2xl font-bold text-white">{job.position}</h2>
+                          <h2 className="text-2xl font-bold text-white">
+                            {job.position}
+                          </h2>
 
                           <div className="flex flex-wrap gap-2">
                             <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs">
@@ -100,7 +112,9 @@ const JobCards = ({ setLocations, setCat, jobCards, filteredCards,debouncedSearc
                             </span>
                           </div>
 
-                          <div className="text-zinc-300 font-medium">{job.salary}</div>
+                          <div className="text-zinc-300 font-medium">
+                            {job.salary}
+                          </div>
                         </div>
 
                         <div className="mt-6">

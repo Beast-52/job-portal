@@ -9,6 +9,7 @@ const JobSearchBar = ({
   debouncedSearchTerm,
   setDebouncedSearchTerm,
   setFilteredCards,
+  pos
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("Select Location");
@@ -143,7 +144,7 @@ const JobSearchBar = ({
 
         {/* Trending Keywords */}
         <div className="mt-6 flex flex-wrap gap-3 justify-center">
-          {cat?.map((keyword, index) => (
+          {pos?.map((keyword, index) => (
             <span
               key={index}
               onClick={() => {

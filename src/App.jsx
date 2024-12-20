@@ -13,7 +13,7 @@ import "swiper/css/pagination";
 function App() {
   const [locations, setLocations] = useState(null);
   const [cat, setCat] = useState(null);
-
+  const [pos, setPos] = useState(null);
   const [jobCards, setJobCards] = useState([
     // 6 Mid-Level Jobs
     {
@@ -245,6 +245,7 @@ function App() {
         setFilteredCards={setFilteredCards}
         jobCards={jobCards}
         debouncedSearchTerm={debouncedSearchTerm}
+        pos={pos}
         setDebouncedSearchTerm={setDebouncedSearchTerm}
       />
       <JobCards
@@ -253,6 +254,7 @@ function App() {
         setCat={setCat}
         debouncedSearchTerm={debouncedSearchTerm}
         jobCards={jobCards}
+        setPos={setPos}
       />
       <JobPortalFooter />
     </div>
