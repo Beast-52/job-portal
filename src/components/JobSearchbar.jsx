@@ -1,41 +1,56 @@
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, Layers, Zap } from "lucide-react";
+import { Search, MapPin, Layers, Zap, Plus } from "lucide-react"; // Added Zap for the search button icon
 
-const JobSearchBar = ({ locations, cat }) => {
+const JobSearchBar = ({
+  locations,
+  cat,
+  jobCards,
+  filteredCards,
+  debouncedSearchTerm,
+  setDebouncedSearchTerm,
+  setFilteredCards,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // State to store debounced value
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
-
-  const trendingKeywords = [
-    { text: "DESIGNER", color: "from-green-400 to-green-600" },
-    { text: "PHP", color: "from-yellow-400 to-yellow-600" },
-    { text: "DEVELOPER", color: "from-red-400 to-red-600" },
-    { text: "WEB DEVELOPER", color: "from-blue-400 to-blue-600" },
-    { text: "WEB", color: "from-green-500 to-green-700" },
-    { text: "NEXT LONDON", color: "from-purple-400 to-purple-600" },
-    { text: "ENGINEER", color: "from-orange-500 to-orange-700" },
-    { text: "LINUX", color: "from-gray-300 to-gray-500" },
-    { text: "IOS", color: "from-blue-300 to-blue-500" },
-  ];
 
   // Debounce logic
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm); // Update the debounced value
-    }, 300); // 300ms delay
+      setDebouncedSearchTerm(searchTerm);
+    }, 500); // 1 second delay
 
     return () => {
-      clearTimeout(handler); // Cleanup the timeout on every render
+      clearTimeout(handler); // Cleanup the timeout on each render
     };
   }, [searchTerm]);
 
+  // Filter job cards based on the search term, location, and category
   useEffect(() => {
-    if (debouncedSearchTerm) {
-      // Perform the search or API call with the debouncedSearchTerm
-      console.log("Searching for:", debouncedSearchTerm);
-    }
-  }, [debouncedSearchTerm]);
+    const filtered = jobCards.filter((job) => {
+      const searchMatch =
+        job?.position
+          ?.toLowerCase()
+          ?.includes(debouncedSearchTerm?.toLowerCase()) ||
+        job?.company
+          ?.toLowerCase()
+          ?.includes(debouncedSearchTerm?.toLowerCase()) ||
+        job?.location
+          ?.toLowerCase()
+          ?.includes(debouncedSearchTerm?.toLowerCase());
+
+      const locationMatch = location
+        ? job?.location?.toLowerCase()?.includes(location.toLowerCase())
+        : true;
+
+      const categoryMatch = category
+        ? job?.level?.toLowerCase()?.includes(category.toLowerCase())
+        : true;
+
+      return searchMatch && locationMatch && categoryMatch;
+    });
+    setFilteredCards(filtered);
+  }, [debouncedSearchTerm, location, category, jobCards, setFilteredCards]);
 
   return (
     <div className="relative max-w-6xl mx-auto px-4 py-12">
@@ -45,7 +60,7 @@ const JobSearchBar = ({ locations, cat }) => {
       <div className="relative z-10 bg-black/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
           {/* Search Input */}
-          <div className="md:col-span-4 relative group">
+          <div className="md:col-span-4 relative group w-full">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl opacity-30 group-hover:opacity-50 blur-lg transition duration-300"></div>
             <div className="relative flex items-center">
               <Search className="absolute left-4 text-zinc-400 group-hover:text-white transition" />
@@ -56,11 +71,19 @@ const JobSearchBar = ({ locations, cat }) => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white placeholder-zinc-500 rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               />
+              {debouncedSearchTerm.length > 0 && (
+                <Plus 
+                onClick={()=>{
+                  setSearchTerm("");
+                  setDebouncedSearchTerm("");
+                }}
+                className="absolute cursor-pointer top-1/2 -translate-y-1/2 text-red-600 right-3 rotate-45" />
+              )}
             </div>
           </div>
 
           {/* Location */}
-          <div className="md:col-span-2 relative group">
+          <div className="md:col-span-2 relative group w-full">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl opacity-30 group-hover:opacity-50 blur-lg transition duration-300"></div>
             <div className="relative flex items-center">
               <MapPin className="absolute left-4 text-zinc-400 group-hover:text-white transition" />
@@ -80,7 +103,7 @@ const JobSearchBar = ({ locations, cat }) => {
           </div>
 
           {/* Category */}
-          <div className="md:col-span-2 relative group">
+          <div className="md:col-span-2 relative group w-full">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl opacity-30 group-hover:opacity-50 blur-lg transition duration-300"></div>
             <div className="relative flex items-center">
               <Layers className="absolute left-4 text-zinc-400 group-hover:text-white transition" />
@@ -100,7 +123,7 @@ const JobSearchBar = ({ locations, cat }) => {
           </div>
 
           {/* Search Button */}
-          <div className="md:col-span-4 relative group">
+          <div className="md:col-span-4 relative group w-full">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl opacity-75 group-hover:opacity-100 animate-pulse"></div>
             <button className="relative w-full py-3 bg-black text-white rounded-xl hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-500 transition duration-300 flex items-center justify-center space-x-2">
               <Zap className="w-5 h-5" />
@@ -111,25 +134,15 @@ const JobSearchBar = ({ locations, cat }) => {
 
         {/* Trending Keywords */}
         <div className="mt-6 flex flex-wrap gap-3 justify-center">
-          {trendingKeywords.map((keyword, index) => (
+          {cat?.map((keyword, index) => (
             <span
               key={index}
-              className={`
-                inline-block 
-                text-xs 
-                px-3 
-                py-1 
-                rounded-full 
-                bg-gradient-to-r 
-                ${keyword.color}
-                text-white 
-                cursor-pointer 
-                hover:scale-105 
-                transition 
-                duration-300
-              `}
+              onClick={() => {
+                setSearchTerm(keyword);
+              }}
+              className="inline-block text-xs px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 text-white cursor-pointer hover:scale-105 transition duration-300"
             >
-              {keyword.text}
+              {keyword}
             </span>
           ))}
         </div>
