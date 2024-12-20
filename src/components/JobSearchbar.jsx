@@ -37,7 +37,8 @@ const JobSearchBar = ({
           ?.includes(debouncedSearchTerm?.toLowerCase()) ||
         job?.location
           ?.toLowerCase()
-          ?.includes(debouncedSearchTerm?.toLowerCase());
+          ?.includes(debouncedSearchTerm?.toLowerCase()) ||
+        job?.level?.split('-').join(' ').toLowerCase()?.includes(debouncedSearchTerm?.toLowerCase());
 
       const locationMatch = location
         ? job?.location?.toLowerCase()?.includes(location.toLowerCase())
@@ -50,7 +51,7 @@ const JobSearchBar = ({
       return searchMatch && locationMatch && categoryMatch;
     });
     setFilteredCards(filtered);
-  }, [debouncedSearchTerm, location, category, jobCards, setFilteredCards]);
+  }, [debouncedSearchTerm, location, category]);
 
   return (
     <div className="relative max-w-6xl mx-auto px-4 py-12">
@@ -72,12 +73,13 @@ const JobSearchBar = ({
                 className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white placeholder-zinc-500 rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               />
               {debouncedSearchTerm.length > 0 && (
-                <Plus 
-                onClick={()=>{
-                  setSearchTerm("");
-                  setDebouncedSearchTerm("");
-                }}
-                className="absolute cursor-pointer top-1/2 -translate-y-1/2 text-red-600 right-3 rotate-45" />
+                <Plus
+                  onClick={() => {
+                    setSearchTerm("");
+                    setDebouncedSearchTerm("");
+                  }}
+                  className="absolute cursor-pointer top-1/2 -translate-y-1/2 text-red-600 right-3 rotate-45"
+                />
               )}
             </div>
           </div>
