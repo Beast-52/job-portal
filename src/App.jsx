@@ -9,15 +9,57 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import FeaturedSection from "./components/FeaturedCards";
+import Button from "./components/partials/Button";
 
 function App() {
   const [locations, setLocations] = useState(null);
   const [cat, setCat] = useState(null);
   const [pos, setPos] = useState(null);
+  var featuredImg = [
+    "https://www.jobringer.com/images/content/company-logo/hjp57b2d9a1b3ff03e0abcafccdc097db29.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp865ef4233d489190ee7a602824b6392b.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp82a3f90e0b7310f33f4a6bbe468af0f6.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp013ee6944a356dbdd4bfed0bc21092bf.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpdd20cfbca685549a0db3aa6065310fe0.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpa2f7d2ddb7bc3563adc760df78a79d6a.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpf11616fdc9308a376d61b3ccfdf401df.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp008b48b03e61b91cb07f8f394023d584.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp4dcf93284f5f232b81e49fd2ca8458f2.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp54c04ce1432eac46e9893361d3f4ec48.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp171a8d362acbfd4a02fe467818eb87e1.png",
+
+    "https://www.jobringer.com/images/content/company-logo/hjp77cab2e415ed18323a70fd7622e1f919.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpc4d40a4fae87d3070f77c4bd58de9ecb.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp900cad56691ea8f3e1af71a2dc906276.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpcb99a2c978ee137fae0ee8938a86299f.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpde0325910dc79892a78e0d492d2cae89.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp447885f2519ded51a1d8da2b71184d00.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp152270965262471c66d37dd662917cc3.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpa38e6289f43c488f3c80d24bf3f76b7c.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp82a3f90e0b7310f33f4a6bbe468af0f6.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp013ee6944a356dbdd4bfed0bc21092bf.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpdd20cfbca685549a0db3aa6065310fe0.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpa2f7d2ddb7bc3563adc760df78a79d6a.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpf11616fdc9308a376d61b3ccfdf401df.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp008b48b03e61b91cb07f8f394023d584.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp4dcf93284f5f232b81e49fd2ca8458f2.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp54c04ce1432eac46e9893361d3f4ec48.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp171a8d362acbfd4a02fe467818eb87e1.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp77cab2e415ed18323a70fd7622e1f919.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpc4d40a4fae87d3070f77c4bd58de9ecb.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp900cad56691ea8f3e1af71a2dc906276.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpcb99a2c978ee137fae0ee8938a86299f.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpde0325910dc79892a78e0d492d2cae89.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp447885f2519ded51a1d8da2b71184d00.png",
+    "https://www.jobringer.com/images/content/company-logo/hjp152270965262471c66d37dd662917cc3.png",
+    "https://www.jobringer.com/images/content/company-logo/hjpa38e6289f43c488f3c80d24bf3f76b7c.png",
+  ];
+
   const [jobCards, setJobCards] = useState([
     // 6 Mid-Level Jobs
     {
-      company: "Apple Corporation",
+      company: "Apple ",
       location: "New York, US",
       position: "Designer",
       type: "Full Time",
@@ -27,7 +69,7 @@ function App() {
       logo: "🍎",
     },
     {
-      company: "Amazon Inc.",
+      company: "Amazon ",
       location: "Seattle, US",
       position: "Developer",
       type: "Full Time",
@@ -79,7 +121,7 @@ function App() {
 
     // 7 Senior-Level Jobs
     {
-      company: "Google Corporation",
+      company: "Google",
       location: "London, UK",
       position: "Designer",
       type: "Full Time",
@@ -235,11 +277,13 @@ function App() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // Debounced search term
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+
+
   return (
     <div
-      className={`w-full h-screen ${
-        isMenuOpen && "overflow-hidden " 
-      } bg-zinc-900 overflow-x-hidden`}
+      className={`w-full  bg-zinc-900 ${
+        isMenuOpen ? "overflow-hidden " : "overflow-x-hidden"
+      }`}
     >
       <Navbar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       <Hero />
@@ -261,6 +305,7 @@ function App() {
         jobCards={jobCards}
         setPos={setPos}
       />
+      <FeaturedSection featuredImg={featuredImg} />
       <JobPortalFooter />
     </div>
   );

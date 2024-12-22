@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Logo from "./partials/Logo";
 import Button from "./partials/Button";
-import { Cross, CrossIcon, LucideCross, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
-const Navbar = ({isMenuOpen,setIsMenuOpen}) => {
-
+const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
   const navItems = [
     "Jobs",
     "Active Employers",
@@ -13,18 +12,65 @@ const Navbar = ({isMenuOpen,setIsMenuOpen}) => {
     "Jobseeker Login",
     "Employer Login",
   ];
+  const [isScrolledUp, setIsScrolledUp] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const navRef = useRef(null);
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 10) {
+        // Scrolling down
+        setIsScrolledUp(false);
+      } else {
+        // Scrolling up
+        setIsScrolledUp(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
+  useEffect(() => {
+    if (window.innerWidth < 600) {
+      document.body.style.overflow = isMenuOpen ? "hidden" : "auto";
+    }
+  }, [isMenuOpen, window.innerWidth]);
+  useEffect(() => {
+    const scroll = () => {
+      if (window.scrollY > 10) {
+        navRef.current?.classList.add("scrolled");
+        navRef.current?.classList.remove("transparent");
+      } else {
+        navRef.current?.classList.add("transparent");
+        navRef.current?.classList.remove("scrolled");
+      }
+    };
+
+    window.addEventListener("scroll", scroll);
+
+    return () => {
+      window.removeEventListener("scroll", scroll);
+    };
+  }, []);
 
   return (
-    <nav className="sticky w-full top-0 left-0 z-50 bg-transparent">
-      <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-[#1e1e1e] to-[#121212] opacity-95 backdrop-blur-xl"></div>
+    <nav
+    
+      ref={navRef}
+      className={`fixed w-full top-0 left-0 z-50 transition-transform duration-300 ${
+        isScrolledUp ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
+      <div className="absolute inset-0  opacity-95 transition-all duration-150 backdrop-blur-xl"></div>
 
-      <div className="relative  mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="relative mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex justify-between items-center relative z-10">
-          {/* Logo with Gradient Effect */}
-          <div className="relative group">
-            <Logo size="8vmax" className="relative z-10" />
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg opacity-30 group-hover:opacity-50 transition duration-300 blur-lg"></div>
-          </div>
+          {/* Logo */}
+          <Logo size="8vmax" className="relative z-10" />
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
@@ -38,10 +84,10 @@ const Navbar = ({isMenuOpen,setIsMenuOpen}) => {
               </div>
             ))}
 
-            {/* CTA Buttons with Intense Gradient */}
+            {/* CTA Buttons */}
             <div className="flex items-center space-x-4">
               {navItems.slice(-2).map((item, index) => (
-                <Button item={item} />
+                <Button key={index} item={item} />
               ))}
             </div>
           </div>
@@ -53,9 +99,9 @@ const Navbar = ({isMenuOpen,setIsMenuOpen}) => {
               className="text-white focus:outline-none relative group"
             >
               <div className="space-y-1.5">
-                <span className="block w-6 h-0.5 bg-white transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:to-pink-500"></span>
-                <span className="block w-6 h-0.5 bg-white transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:to-pink-500"></span>
-                <span className="block w-6 h-0.5 bg-white transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:to-pink-500"></span>
+                <span className="block w-6 h-0.5 bg-white"></span>
+                <span className="block w-6 h-0.5 bg-white"></span>
+                <span className="block w-6 h-0.5 bg-white"></span>
               </div>
             </button>
           </div>
@@ -64,29 +110,23 @@ const Navbar = ({isMenuOpen,setIsMenuOpen}) => {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-black/95 z-40 lg:hidden">
+        <div className="fixed inset-0 bg-black/95 z-40 lg:hidden h-screen">
           <div className="flex flex-col items-center justify-center h-full space-y-8">
             {navItems.map((item, index) => (
               <div key={index} className="relative group cursor-pointer">
-                {index < 4 ? (
-                  <span className="text-[2vmax] text-zinc-300 group-hover:text-white transition-colors duration-300 tracking-wide">
-                    {item}
-                  </span>
-                ) : (
-                  <Button item={item} />
-                )}
+                <span className="text-[2vmax] text-zinc-300 group-hover:text-white transition-colors duration-300 tracking-wide">
+                  {item}
+                </span>
                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg opacity-0 group-hover:opacity-10 transition duration-300 blur-lg"></div>
               </div>
             ))}
           </div>
-          {isMenuOpen && (
-            <div
-              className="space-y-1.5 absolute top-3 right-4 z-[9999]"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Plus color="white" className="rotate-45" />
-            </div>
-          )}
+          <div
+            className="absolute top-3 right-4 z-[9999]"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <Plus color="white" className="rotate-45" />
+          </div>
         </div>
       )}
     </nav>

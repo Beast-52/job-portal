@@ -16,7 +16,7 @@ const Hero = () => {
   ];
 
   return (
-    <div className="h-[80vh] flex flex-col justify-center items-center w-full gap-y-2">
+    <div id="top" className="h-[80vh] flex flex-col justify-center items-center w-full gap-y-2">
       <h1 className="md:text-8xl text-[7vw] md:w-[62vw] font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 capitalize">
         Find A Job that You Deserve
       </h1>
@@ -28,7 +28,7 @@ const Hero = () => {
       </p>
       <div className="mt-10 flex gap-3">
         {arr.map((item, index) => (
-        <Button item={item.text}/>
+        <Button item={item.text} key={index}/>
         ))}
       </div>
     </div>

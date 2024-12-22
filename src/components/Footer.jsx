@@ -1,8 +1,43 @@
-import React from "react";
-import { ArrowUpRight, Briefcase, Users, Building2, Mail } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import {
+  ArrowUpRight,
+  Briefcase,
+  Users,
+  Building2,
+  Mail,
+  ArrowDownNarrowWide,
+  ArrowUp,
+} from "lucide-react";
 import Button from "./partials/Button";
 
 const JobPortalFooter = () => {
+  const [scrollPercentage, setScrollPercentage] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollableHeight =
+        document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = window.scrollY;
+      const percentage = (scrolled / scrollableHeight) * 100;
+  
+      setScrollPercentage(percentage.toFixed(2)); // Update state for any other component reactivity.
+  
+      // Use `percentage` directly here.
+      if (percentage > 30) {
+        document.querySelector("#arr").classList.remove("hidden");
+      } else {
+        document.querySelector("#arr").classList.add("hidden");
+      }
+    };
+  
+    window.addEventListener("scroll", handleScroll);
+  
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); // Empty dependency array ensures this runs only once.
+  
+
   const stats = [
     { label: "Active Jobs", value: "2.4k+", icon: Briefcase },
     { label: "Companies", value: "1.8k+", icon: Building2 },
@@ -26,7 +61,6 @@ const JobPortalFooter = () => {
     "Singapore",
     "Berlin",
   ];
-
   return (
     <footer className="relative w-full text-zinc-100">
       {/* Background gradient matching navbar exactly */}
@@ -73,7 +107,10 @@ const JobPortalFooter = () => {
             </h4>
             <ul className="space-y-2">
               {categories.map((category) => (
-                <li key={category} className="relative group cursor-pointer w-fit">
+                <li
+                  key={category}
+                  className="relative group cursor-pointer w-fit"
+                >
                   <span className="text-zinc-300 group-hover:text-white transition-colors duration-300">
                     {category}
                   </span>
@@ -139,6 +176,14 @@ const JobPortalFooter = () => {
           </div>
         </div>
       </div>
+      <a
+        id="arr"
+        href="#top"
+        className="text-white grid z-[99] shadow-lg place-items-center fixed bottom-5 right-5 bg-black w-10 h-10 rounded-full  animate-pulse"
+      >
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
+        <ArrowUp className="bg-black z-[9999] h-[2.45rem] w-[2.45rem] rounded-full px-2" />
+      </a>
     </footer>
   );
 };
