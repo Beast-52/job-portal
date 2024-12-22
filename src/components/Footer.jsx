@@ -12,16 +12,17 @@ import Button from "./partials/Button";
 
 const JobPortalFooter = () => {
   const [scrollPercentage, setScrollPercentage] = useState(0);
-
+  const [email, setEmail] = useState("");
   useEffect(() => {
     const handleScroll = () => {
       const scrollableHeight =
-        document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
       const scrolled = window.scrollY;
       const percentage = (scrolled / scrollableHeight) * 100;
-  
+
       setScrollPercentage(percentage.toFixed(2)); // Update state for any other component reactivity.
-  
+
       // Use `percentage` directly here.
       if (percentage > 10) {
         document.querySelector("#arr").classList.remove("hidden");
@@ -29,14 +30,13 @@ const JobPortalFooter = () => {
         document.querySelector("#arr").classList.add("hidden");
       }
     };
-  
+
     window.addEventListener("scroll", handleScroll);
-  
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [scrollPercentage]); // Empty dependency array ensures this runs only once.
-  
 
   const stats = [
     { label: "Active Jobs", value: "2.4k+", icon: Briefcase },
@@ -147,9 +147,16 @@ const JobPortalFooter = () => {
               <div className="flex items-center space-x-2 bg-black/20 rounded-lg p-3">
                 <Mail className="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors duration-300" />
                 <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   type="email"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setEmail('')
+                    }
+                  }}
                   placeholder="Enter your email"
-                  className="bg-transparent border-none outline-none placeholder-zinc-500 text-zinc-300 flex-1"
+                  className="bg-transparent z-[9999] border-none outline-none placeholder-zinc-500 text-zinc-300 flex-1"
                 />
               </div>
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg opacity-0 group-hover:opacity-10 transition duration-300 blur-lg"></div>
