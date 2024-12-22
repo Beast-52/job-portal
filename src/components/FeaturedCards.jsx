@@ -33,12 +33,12 @@ const FeaturedSection = ({ featuredImg }) => {
               key={index}
               className="flex justify-center items-center h-full "
             >
-              <div className="group relative rounded-lg shadow-lg my-10">
+              <div className="group relative rounded-lg shadow-lg my-10 flex justify-center items-center">
                 <div className="absolute scale-[0.85] -inset-0.5 bg-gradient-to-r rounded-xl from-purple-800 to-pink-900 group-hover:opacity-100 transition duration-300"></div>
                 <img
                   src={img}
                   alt={`Company Logo ${index + 1}`}
-                  className="w-40 h-30 object-cover z-10 relative rounded-3xl p-4 brightness-[0.8] md:m-0 mx-2"
+                  className="  object-cover z-10 relative rounded-3xl p-4 brightness-[0.8] md:m-0 mx-2"
                 />
               </div>
             </SwiperSlide>

@@ -36,5 +36,63 @@ body {
 }
 
 .scrolled {
-  @apply bg-gradient-to-r from-[#121212] via-[#1e1e1e] to-[#121212];
+  @apply bg-gradient-to-r from-[#121212] via-[#1e1e1e] to-[#121212] bg-opacity-10;
+}
+/* Basic Scrollbar Styling for Dark Mode */
+::-webkit-scrollbar {
+  width: 12px;  /* Width of the scrollbar */
+  height: 12px; /* Height of the horizontal scrollbar */
+}
+
+/* Scrollbar Track (background of the scrollbar) */
+::-webkit-scrollbar-track {
+  background-color: #2f2f2f;  /* Dark background for the track */
+  border-radius: 10px; /* Rounded corners for the track */
+}
+
+/* Scroll Thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background: #4a4a4a;  /* Dark gray thumb */
+  border-radius: 10px;  /* Rounded corners for the thumb */
+  transition: background 0.3s ease;
+}
+
+/* Scroll Thumb on Hover */
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-transparent bg-gradient-to-b to-pink-600 from-purple-600; 
+}
+
+/* Optional: Custom scrollbar style for horizontal scroll */
+::-webkit-scrollbar-thumb:horizontal {
+  background: #4a4a4a;
+}
+.swiper-container .swiper-pagination-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+background-color: #ffffff90;
+}
+
+.swiper-container .swiper-pagination-bullet-active {
+  width: 20px;
+  background: linear-gradient(90deg, #9333ea, #db2777) ;
+  
+}
+@media (max-width:600px){
+  
+  .swiper-container .swiper-pagination-bullet-active {
+    width: 10px;
+    transform: scale(0.5);
+    background: linear-gradient(90deg, #9333ea, #db2777);
+  }
+  .swiper-container .swiper-pagination-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+  background-color: #ffffff90;
+  transform: scale(0.5);
+margin: 0 !important;
+  }
 }

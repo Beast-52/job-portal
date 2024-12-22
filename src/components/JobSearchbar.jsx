@@ -9,55 +9,70 @@ const JobSearchBar = ({
   debouncedSearchTerm,
   setDebouncedSearchTerm,
   setFilteredCards,
-  pos
+  pos,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("Select Location");
   const [category, setCategory] = useState("Select Category");
 
-  // Debounce logic
+  // Immediately update debounced search term
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
+    setDebouncedSearchTerm(searchTerm);
+  }, [searchTerm, setDebouncedSearchTerm]);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm]);
-
-  // Filter job cards based on the search term, location, and category
-  // Filter job cards based on the search term, location, and category
+  // Filter job cards based on all criteria
   useEffect(() => {
     const filtered = jobCards.filter((job) => {
-      // Check if searchTerm matches any of the fields
-      const searchMatch =
-        searchTerm === "" || // Include all if searchTerm is empty
-        job?.position?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-        job?.company?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-        job?.location?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-        job?.level
-          ?.split("-")
-          .join(" ")
-          .toLowerCase()
-          ?.includes(searchTerm.toLowerCase());
+      const searchTermLower = searchTerm.toLowerCase();
+      const locationLower = location.toLowerCase();
+      const categoryLower = category.toLowerCase();
 
-      // Check if location matches
-      const locationMatch =
-        location === "Select Location" || // Include all if location is default
-        job?.location?.toLowerCase() === location.toLowerCase();
+      // Search term matching
+      const searchMatch = 
+        job?.position?.toLowerCase().includes(searchTermLower) ||
+        job?.company?.toLowerCase().includes(searchTermLower) ||
+        job?.location?.toLowerCase().includes(searchTermLower) ||
+        job?.level?.toLowerCase().includes(searchTermLower);
 
-      // Check if category matches
-      const categoryMatch =
-        category === "Select Category" || // Include all if category is default
-        job?.level?.toLowerCase() === category.toLowerCase();
+      // Location matching
+      const locationMatch = 
+        location === "Select Location" ||
+        job?.location?.toLowerCase() === locationLower;
 
-      // Combine the conditions
+      // Category matching
+      const categoryMatch = 
+        category === "Select Category" ||
+        job?.level?.toLowerCase() === categoryLower;
+
+      // If search is empty, use only location and category filters
+      if (searchTerm === "") {
+        return locationMatch && categoryMatch;
+      }
+      
+      // If search has content, use all filters
       return searchMatch && locationMatch && categoryMatch;
     });
 
     setFilteredCards(filtered);
-  }, [searchTerm, location, category, jobCards]);
+  }, [searchTerm, location, category, jobCards, setFilteredCards]);
+
+  // Reset filters
+  const resetFilters = () => {
+    setSearchTerm("");
+    setLocation("Select Location");
+    setCategory("Select Category");
+    setDebouncedSearchTerm("");
+  };
+
+  // Handle location change
+  const handleLocationChange = (e) => {
+    setLocation(e.target.value);
+  };
+
+  // Handle category change
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+  };
 
   return (
     <div className="relative max-w-6xl mx-auto px-4 py-12">
@@ -78,12 +93,9 @@ const JobSearchBar = ({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white placeholder-zinc-500 rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               />
-              {debouncedSearchTerm.length > 0 && (
+              {searchTerm.length > 0 && (
                 <Plus
-                  onClick={() => {
-                    setSearchTerm("");
-                    setDebouncedSearchTerm("");
-                  }}
+                  onClick={() => setSearchTerm("")}
                   className="absolute cursor-pointer top-1/2 -translate-y-1/2 text-red-600 right-3 rotate-45"
                 />
               )}
@@ -97,16 +109,15 @@ const JobSearchBar = ({
               <MapPin className="absolute left-4 text-zinc-400 group-hover:text-white transition" />
               <select
                 value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                onChange={handleLocationChange}
+                className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition appearance-none"
               >
                 <option>Select Location</option>
-                {locations &&
-                  locations.map((loc) => (
-                    <option key={loc} value={loc}>
-                      {loc}
-                    </option>
-                  ))}
+                {locations?.map((loc) => (
+                  <option key={loc} value={loc}>
+                    {loc}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -118,26 +129,28 @@ const JobSearchBar = ({
               <Layers className="absolute left-4 text-zinc-400 group-hover:text-white transition" />
               <select
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                onChange={handleCategoryChange}
+                className="w-full pl-12 pr-4 py-3 bg-zinc-900/50 text-white rounded-xl border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition appearance-none"
               >
                 <option>Select Category</option>
-                {cat &&
-                  cat.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
+                {cat?.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
 
-          {/* Search Button */}
+          {/* Reset Button */}
           <div className="md:col-span-4 relative group w-full">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl opacity-75 group-hover:opacity-100 animate-pulse"></div>
-            <button className="relative w-full py-3 bg-black text-white rounded-xl hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-500 transition duration-300 flex items-center justify-center space-x-2">
+            <button 
+              onClick={resetFilters}
+              className="relative w-full py-3 bg-black text-white rounded-xl hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-500 transition duration-300 flex items-center justify-center space-x-2"
+            >
               <Zap className="w-5 h-5" />
-              <span>Search Jobs</span>
+              <span>Reset Filters</span>
             </button>
           </div>
         </div>
@@ -147,9 +160,7 @@ const JobSearchBar = ({
           {pos?.map((keyword, index) => (
             <span
               key={index}
-              onClick={() => {
-                setSearchTerm(keyword);
-              }}
+              onClick={() => setSearchTerm(keyword)}
               className="inline-block text-xs px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 text-white cursor-pointer hover:scale-105 transition duration-300"
             >
               {keyword}

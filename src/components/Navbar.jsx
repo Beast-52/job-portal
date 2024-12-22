@@ -15,6 +15,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
   const [isScrolledUp, setIsScrolledUp] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const navRef = useRef(null);
+  const subNavRef = useRef(null);
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -59,13 +60,15 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
 
   return (
     <nav
-    
       ref={navRef}
       className={`fixed w-full top-0 left-0 z-50 transition-transform duration-300 ${
         isScrolledUp ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="absolute inset-0  opacity-95 transition-all duration-150 backdrop-blur-xl"></div>
+      <div
+        ref={subNavRef}
+        className="absolute inset-0  opacity-95 transition-all duration-150 backdrop-blur-xl"
+      ></div>
 
       <div className="relative mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex justify-between items-center relative z-10">
@@ -74,7 +77,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navItems.slice(3).map((item, index) => (
+            {navItems.slice(0, 3).map((item, index) => (
               <div key={index} className="relative group cursor-pointer">
                 <span className="relative text-zinc-300 group-hover:text-white transition-colors duration-300 text-base font-medium tracking-wide">
                   {item}
@@ -112,14 +115,18 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
       {isMenuOpen && (
         <div className="fixed inset-0 bg-black/95 z-40 lg:hidden h-screen">
           <div className="flex flex-col items-center justify-center h-full space-y-8">
-            {navItems.map((item, index) => (
-              <div key={index} className="relative group cursor-pointer">
-                <span className="text-[2vmax] text-zinc-300 group-hover:text-white transition-colors duration-300 tracking-wide">
-                  {item}
-                </span>
-                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg opacity-0 group-hover:opacity-10 transition duration-300 blur-lg"></div>
-              </div>
-            ))}
+            {navItems.map((item, index) => {
+              return index <= 3 ? (
+                <div key={index} className="relative group cursor-pointer">
+                  <span className="text-[2vmax] text-zinc-300 group-hover:text-white transition-colors duration-300 tracking-wide">
+                    {item}
+                  </span>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg opacity-0 group-hover:opacity-10 transition duration-300 blur-lg"></div>
+                </div>
+              ) : (
+                <Button key={index} item={item} />
+              );
+            })}
           </div>
           <div
             className="absolute top-3 right-4 z-[9999]"

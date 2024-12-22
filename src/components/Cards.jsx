@@ -29,65 +29,94 @@ const JobCards = ({
   }, [jobCards, setLocations, setCat, setPos]);
 
   const cardsToRender =
-    debouncedSearchTerm?.length > 0 ? filteredCards : jobCards;
+    filteredCards?.length > 0 ? filteredCards : jobCards;
+
+  // Filter levels that have at least one job
+  const levelsWithJobs = levels.filter((level) => {
+    return cardsToRender.some((job) => job.level === level);
+  });
 
   return (
-    <div className="bg-[#121212] min-h-screen py-16 px-4 sm:px-6 lg:px-8">
-      <div className="w-[90%] md:max-w-7xl mx-auto">
-        <h1 className="text-4xl md:text-6xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 mb-12">
+    <div className="min-h-screen bg-[#121212] py-8 sm:py-12 md:py-16">
+      <div className="mx-auto w-full px-4 sm:px-6 md:px-8 lg:max-w-7xl">
+        <h1 className="mb-8 md:mb-12 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
           Explore Exciting Opportunities
         </h1>
 
         {cardsToRender.length > 0 ? (
-          levels.map((level, index) => (
-            <div key={level} className="mb-16">
-              <h2
-                className={`text-2xl md:text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r ${levelColors[level]}`}
-              >
-                {level} Jobs
-              </h2>
+          levelsWithJobs.map((level) => {
+            const levelJobs = cardsToRender.filter((job) => job.level === level);
+            const shouldShowNavigation = levelJobs.length > 3;
 
-              <div className="relative group ">
-                <Swiper
-                  modules={[Navigation, Pagination, A11y, Autoplay]}
-                  spaceBetween={50}
-                  slidesPerView={1}
-                  navigation={true}
-                  pagination={{ clickable: true }}
-                  autoplay={{
-                    delay: 5000,
-                    disableOnInteraction: false,
-                  }}
-                  breakpoints={{
-                    640: { slidesPerView: 1 },
-                    768: { slidesPerView: 2 },
-                    1024: { slidesPerView: 3 },
-                  }}
-                  className="job-swiper-container "
+            return (
+              <div key={level} className="mb-8 sm:mb-12 md:mb-16">
+                <h2
+                  className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8 text-transparent bg-clip-text bg-gradient-to-r ${levelColors[level]}`}
                 >
-                  {cardsToRender
-                    .filter((job) => job.level === level)
-                    .map((job, jobIndex) => (
-                      <SwiperSlide key={jobIndex}>
-                        <div className="relative p-1">
-                          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl opacity-75 group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
-                          <div className="relative bg-zinc-900 p-6 rounded-2xl h-full border border-zinc-800 shadow-2xl">
-                            <div className="flex justify-between items-start mb-6">
-                              <div className="flex items-center space-x-4">
-                                <div className="text-5xl">{job.logo}</div>
+                  {level} Jobs
+                </h2>
+
+                <div className="relative group">
+                  <Swiper
+                    modules={[Navigation, Pagination, A11y, Autoplay]}
+                    spaceBetween={16}
+                    slidesPerView={1}
+                    navigation={shouldShowNavigation}
+                    pagination={{ clickable: true }}
+                    loop={true}
+                    autoplay={{
+                      delay: 5000,
+                      disableOnInteraction: false,
+                    }}
+                    breakpoints={{
+                      320: {
+                        slidesPerView: 1,
+                        spaceBetween: 12,
+                      },
+                      540: {
+                        slidesPerView: 1,
+                        spaceBetween: 16,
+                      },
+                      768: {
+                        slidesPerView: 2,
+                        spaceBetween: 20,
+                      },
+                      1024: {
+                        slidesPerView: 3,
+                        spaceBetween: 24,
+                      },
+                      1280: {
+                        slidesPerView: 3,
+                        spaceBetween: 50,
+                      },
+                    }}
+                    className={`job-swiper-container ${!shouldShowNavigation ? 'no-navigation' : ''}`}
+                  >
+                    {levelJobs.map((job, jobIndex) => (
+                      <SwiperSlide key={jobIndex} className="px-1 py-2">
+                        <div className="relative p-1 h-full">
+                          <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-75 group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
+                          <div className="relative h-full bg-zinc-900 p-4 sm:p-6 rounded-xl border border-zinc-800 shadow-2xl">
+                            {/* Rest of the card content remains the same */}
+                            {/* Card Header */}
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
+                              <div className="flex items-center gap-3 sm:gap-4">
+                                <div className="text-3xl sm:text-4xl lg:text-5xl">
+                                  {job.logo}
+                                </div>
                                 <div>
-                                  <h3 className="text-xl font-semibold text-white">
+                                  <h3 className="text-lg sm:text-xl font-semibold text-white">
                                     {job.company}
                                   </h3>
-                                  <p className="text-zinc-400 text-sm">
+                                  <p className="text-zinc-400 text-xs sm:text-sm">
                                     {job.location}
                                   </p>
                                 </div>
                               </div>
-                              <div className="text-zinc-500 hover:text-red-500 cursor-pointer transition">
+                              <button className="text-zinc-500 hover:text-red-500 transition">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  className="h-6 w-6"
+                                  className="h-5 w-5 sm:h-6 sm:w-6"
                                   fill="none"
                                   viewBox="0 0 24 24"
                                   stroke="currentColor"
@@ -99,31 +128,36 @@ const JobCards = ({
                                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                                   />
                                 </svg>
-                              </div>
+                              </button>
                             </div>
 
-                            <div className="space-y-4">
-                              <h2 className="text-2xl font-bold text-white">
+                            {/* Card Body */}
+                            <div className="space-y-3 sm:space-y-4">
+                              <h2 className="text-xl sm:text-2xl font-bold text-white">
                                 {job.position}
                               </h2>
-                              <div className="flex flex-wrap gap-2">
-                                <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs">
+                              <div className="flex overflow-hidden md:gap-5 lg:gap-2">
+                                <span className="bg-green-500/20 shrink-0 text-green-400 px-2 sm:px-3 py-1 rounded-full text-xs">
                                   {job.level}
                                 </span>
-                                <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs">
+                                <span className="bg-blue-500/20 shrink-0 text-blue-400 px-2 sm:px-3 py-1 rounded-full text-xs">
                                   {job.type}
                                 </span>
-                                <span className="bg-purple-500/20 text-purple-400 px-3 py-1 rounded-full text-xs">
+                                <span className="bg-purple-500/20 shrink-0 text-purple-400 px-2 sm:px-3 py-1 rounded-full text-xs">
                                   {job.workMode}
                                 </span>
                               </div>
-                              <div className="text-zinc-300 font-medium">
+                              <div className="text-zinc-300 text-sm sm:text-base font-medium">
                                 {job.salary}
                               </div>
                             </div>
 
-                            <div className="mt-6">
-                              <a href="#" className="w-full text-center inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition duration-300 transform hover:scale-[1.02]">
+                            {/* Card Footer */}
+                            <div className="mt-4 sm:mt-6">
+                              <a
+                                href="#"
+                                className="block w-full text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 sm:py-3 px-4 rounded-lg text-sm sm:text-base font-medium hover:from-purple-700 hover:to-pink-700 transition duration-300 transform hover:scale-[1.02]"
+                              >
                                 Apply Now
                               </a>
                             </div>
@@ -131,57 +165,129 @@ const JobCards = ({
                         </div>
                       </SwiperSlide>
                     ))}
-                </Swiper>
+                  </Swiper>
+                </div>
               </div>
-            </div>
-          ))
-        ) : (
+            );
+          })
+        ) :  (
           <div className="text-center text-white mt-8">
             <p>No jobs found matching your search criteria.</p>
           </div>
         )}
       </div>
 
+
       <style>
         {`
-          
-      .job-swiper-container {
-  padding:  40px 2.2vmax !important;
-  position: relative;
+          .job-swiper-container {
+            position: relative;
+            padding: 2rem 3rem !important;
+          }
 
-}
-          
+          @media (max-width: 640px) {
+            .job-swiper-container {
+              padding: 2rem 0 !important;
+            }
+          }
 
-          .swiper-pagination-bullet {
-            width: 8px;
-            height: 8px;
+          .job-swiper-container .swiper-pagination-bullet {
+            width: 6px;
+            height: 6px;
             background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
+            border-radius: 3px;
             transition: all 0.3s ease;
           }
 
-          .swiper-pagination-bullet-active {
-            width: 24px;
+          .job-swiper-container .swiper-pagination-bullet-active {
+            width: 20px;
             background: linear-gradient(90deg, #9333ea, #db2777);
           }
 
-          .swiper-button-disabled {
-            opacity: 0.5 !important;
+          .job-swiper-container .swiper-button-next,
+.job-swiper-container .swiper-button-prev {
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  background: rgba(18, 18, 18, 0.8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  padding: 0; /* Fixed invalid padding */
+  cursor: pointer; /* Add this for better interactivity */
+}
+
+
+
+
+          .job-swiper-container .swiper-button-next {
+            right: 0;
+          }
+
+          .job-swiper-container .swiper-button-prev {
+            left: 0;
+          }
+
+          .job-swiper-container .swiper-button-next::after,
+          .job-swiper-container .swiper-button-prev::after {
+            font-size: 1.25rem;
+            font-weight: bold;
+          }
+
+          .job-swiper-container .swiper-button-next:hover,
+          .job-swiper-container .swiper-button-prev:hover {
+            color: rgba(255, 255, 255, 1);
+            background: rgba(18, 18, 18, 1);
+            transform:  scale(1.1);
+          }
+
+          .job-swiper-container .swiper-button-disabled {
+            opacity: 0.5;
             cursor: not-allowed;
           }
-           
 
-    /* Hide navigation arrows on screens less than 600px */
-    @media (max-width: 600px) {
-      .swiper-button-next,
-      .swiper-button-prev {
-        display: none;
-      }
-        .job-swiper-container {
-  padding: 30px 0px!important;
-  position: relative;
-}
-    }
+          @media (max-width: 640px) {
+            .job-swiper-container .swiper-button-next,
+            .job-swiper-container .swiper-button-prev {
+              display: none;
+            }
+          }
+
+          @media (min-width: 641px) and (max-width: 1024px) {
+            .job-swiper-container {
+              padding: 1.5rem 2.5rem !important;
+            }
+            
+            .job-swiper-container .swiper-button-next,
+            .job-swiper-container .swiper-button-prev {
+              width: 35px;
+              height: 35px;
+            }
+
+            .job-swiper-container .swiper-button-next::after,
+            .job-swiper-container .swiper-button-prev::after {
+              font-size: 1rem;
+            }
+          }
+
+          @media (min-width: 1025px) {
+            .job-swiper-container .swiper-button-next,
+            .job-swiper-container .swiper-button-prev {
+              width: 45px;
+              height: 45px;
+            }
+
+            .job-swiper-container .swiper-button-next::after,
+            .job-swiper-container .swiper-button-prev::after {
+              font-size: 1.5rem;
+            }
+          }
         `}
       </style>
     </div>
