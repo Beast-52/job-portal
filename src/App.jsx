@@ -276,8 +276,8 @@ function App() {
   const [filteredCards, setFilteredCards] = useState([]);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // Debounced search term
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-
+  const [location, setLocation] = useState("Select Location");
+  const [category, setCategory] = useState("Select Category");
 
   return (
     <div
@@ -295,6 +295,10 @@ function App() {
         jobCards={jobCards}
         debouncedSearchTerm={debouncedSearchTerm}
         pos={pos}
+        location={location}
+        setLocation={setLocation}
+        setCategory={setCategory}
+        category={category}
         setDebouncedSearchTerm={setDebouncedSearchTerm}
       />
       <JobCards
@@ -304,6 +308,8 @@ function App() {
         debouncedSearchTerm={debouncedSearchTerm}
         jobCards={jobCards}
         setPos={setPos}
+        location={location}
+        category={category}
       />
       <FeaturedSection featuredImg={featuredImg} />
       <JobPortalFooter />

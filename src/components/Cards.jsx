@@ -11,6 +11,8 @@ const JobCards = ({
   jobCards,
   filteredCards,
   debouncedSearchTerm,
+  location,
+  category,
   setPos,
 }) => {
   const levels = ["Senior Level", "Mid Level", "Entry Level"];
@@ -28,13 +30,21 @@ const JobCards = ({
     setPos(() => [...new Set(jobCards.map((job) => job.position))]);
   }, [jobCards, setLocations, setCat, setPos]);
 
-  const cardsToRender =
-    filteredCards?.length > 0 ? filteredCards : jobCards;
+  const cardsToRender = filteredCards?.length > 0 ? filteredCards : jobCards;
 
-  // Filter levels that have at least one job
-  const levelsWithJobs = levels.filter((level) => {
-    return cardsToRender.some((job) => job.level === level);
+  // Filter job cards by location and category
+  const filteredJobs = cardsToRender.filter((job) => {
+    const locationMatch =
+      location === "Select Location" || job.location === location;
+    const categoryMatch =
+      category === "Select Category" || job.level === category;
+    return locationMatch && categoryMatch;
   });
+
+  // Filter jobs by level after location and category are applied
+  const levelsToRender = levels.filter((level) =>
+    filteredJobs.some((job) => job.level === level)
+  );
 
   return (
     <div className="min-h-screen bg-[#121212] py-8 sm:py-12 md:py-16">
@@ -43,11 +53,14 @@ const JobCards = ({
           Explore Exciting Opportunities
         </h1>
 
-        {cardsToRender.length > 0 ? (
-          levelsWithJobs.map((level) => {
-            const levelJobs = cardsToRender.filter((job) => job.level === level);
+        {filteredJobs.length === 0 ? (
+          <div className="text-center text-white mt-8">
+            <p>No jobs found matching your search criteria.</p>
+          </div>
+        ) : (
+          levelsToRender.map((level) => {
+            const levelJobs = filteredJobs.filter((job) => job.level === level);
             const shouldShowNavigation = levelJobs.length > 3;
-
             return (
               <div key={level} className="mb-8 sm:mb-12 md:mb-16">
                 <h2
@@ -90,14 +103,15 @@ const JobCards = ({
                         spaceBetween: 50,
                       },
                     }}
-                    className={`job-swiper-container ${!shouldShowNavigation ? 'no-navigation' : ''}`}
+                    className={`job-swiper-container ${
+                      !shouldShowNavigation ? "no-navigation" : ""
+                    }`}
                   >
                     {levelJobs.map((job, jobIndex) => (
                       <SwiperSlide key={jobIndex} className="px-1 py-2">
                         <div className="relative p-1 h-full">
                           <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-75 group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
                           <div className="relative h-full bg-zinc-900 p-4 sm:p-6 rounded-xl border border-zinc-800 shadow-2xl">
-                            {/* Rest of the card content remains the same */}
                             {/* Card Header */}
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
                               <div className="flex items-center gap-3 sm:gap-4">
@@ -113,22 +127,6 @@ const JobCards = ({
                                   </p>
                                 </div>
                               </div>
-                              <button className="text-zinc-500 hover:text-red-500 transition">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-5 w-5 sm:h-6 sm:w-6"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                                  />
-                                </svg>
-                              </button>
                             </div>
 
                             {/* Card Body */}
@@ -170,125 +168,92 @@ const JobCards = ({
               </div>
             );
           })
-        ) :  (
-          <div className="text-center text-white mt-8">
-            <p>No jobs found matching your search criteria.</p>
-          </div>
         )}
       </div>
-
-
       <style>
         {`
+        .job-swiper-container {
+          position: relative;
+          padding: 2rem 3rem !important;
+        }
+
+        @media (max-width: 640px) {
           .job-swiper-container {
-            position: relative;
-            padding: 2rem 3rem !important;
+            padding: 2rem 0 !important;
           }
+        }
 
-          @media (max-width: 640px) {
-            .job-swiper-container {
-              padding: 2rem 0 !important;
-            }
-          }
+        .job-swiper-container .swiper-pagination-bullet {
+          width: 6px;
+          height: 6px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 3px;
+          transition: all 0.3s ease;
+        }
 
-          .job-swiper-container .swiper-pagination-bullet {
-            width: 6px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
-            transition: all 0.3s ease;
-          }
+        .job-swiper-container .swiper-pagination-bullet-active {
+          width: 20px;
+          background: linear-gradient(90deg, #9333ea, #db2777);
+        }
 
-          .job-swiper-container .swiper-pagination-bullet-active {
-            width: 20px;
-            background: linear-gradient(90deg, #9333ea, #db2777);
-          }
+        .job-swiper-container .swiper-button-next,
+        .job-swiper-container .swiper-button-prev {
+          color: rgba(255, 255, 255, 0.7);
+          transition: all 0.3s ease;
+          position: absolute;
+          top: 50%;
+          z-index: 10;
+          width: 40px;
+          height: 40px;
+          background: rgba(18, 18, 18, 0.8);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          backdrop-filter: blur(4px);
+          padding: 0;
+          cursor: pointer;
+        }
 
+        .job-swiper-container .swiper-button-next {
+          right: 0;
+        }
+
+        .job-swiper-container .swiper-button-prev {
+          left: 0;
+        }
+
+        .job-swiper-container .swiper-button-next::after,
+        .job-swiper-container .swiper-button-prev::after {
+          font-size: 1.25rem;
+          font-weight: bold;
+        }
+
+        .job-swiper-container .swiper-button-next:hover,
+        .job-swiper-container .swiper-button-prev:hover {
+          color: rgba(255, 255, 255, 1);
+          background: rgba(18, 18, 18, 1);
+          transform: scale(1.1);
+        }
+
+        .job-swiper-container .swiper-button-disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        @media (max-width: 640px) {
           .job-swiper-container .swiper-button-next,
-.job-swiper-container .swiper-button-prev {
-  color: rgba(255, 255, 255, 0.7);
-  transition: all 0.3s ease;
-  position: absolute;
-  top: 50%;
-  z-index: 10;
-  width: 40px;
-  height: 40px;
-  background: rgba(18, 18, 18, 0.8);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(4px);
-  padding: 0; /* Fixed invalid padding */
-  cursor: pointer; /* Add this for better interactivity */
-}
-
-
-
-
-          .job-swiper-container .swiper-button-next {
-            right: 0;
-          }
-
           .job-swiper-container .swiper-button-prev {
-            left: 0;
+            display: none;
           }
+        }
 
-          .job-swiper-container .swiper-button-next::after,
-          .job-swiper-container .swiper-button-prev::after {
-            font-size: 1.25rem;
-            font-weight: bold;
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .job-swiper-container {
+            padding: 1.5rem 2.5rem !important;
           }
-
-          .job-swiper-container .swiper-button-next:hover,
-          .job-swiper-container .swiper-button-prev:hover {
-            color: rgba(255, 255, 255, 1);
-            background: rgba(18, 18, 18, 1);
-            transform:  scale(1.1);
-          }
-
-          .job-swiper-container .swiper-button-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
-
-          @media (max-width: 640px) {
-            .job-swiper-container .swiper-button-next,
-            .job-swiper-container .swiper-button-prev {
-              display: none;
-            }
-          }
-
-          @media (min-width: 641px) and (max-width: 1024px) {
-            .job-swiper-container {
-              padding: 1.5rem 2.5rem !important;
-            }
-            
-            .job-swiper-container .swiper-button-next,
-            .job-swiper-container .swiper-button-prev {
-              width: 35px;
-              height: 35px;
-            }
-
-            .job-swiper-container .swiper-button-next::after,
-            .job-swiper-container .swiper-button-prev::after {
-              font-size: 1rem;
-            }
-          }
-
-          @media (min-width: 1025px) {
-            .job-swiper-container .swiper-button-next,
-            .job-swiper-container .swiper-button-prev {
-              width: 45px;
-              height: 45px;
-            }
-
-            .job-swiper-container .swiper-button-next::after,
-            .job-swiper-container .swiper-button-prev::after {
-              font-size: 1.5rem;
-            }
-          }
-        `}
+        }
+      `}
       </style>
     </div>
   );

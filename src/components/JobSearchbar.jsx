@@ -10,10 +10,12 @@ const JobSearchBar = ({
   setDebouncedSearchTerm,
   setFilteredCards,
   pos,
+  location,
+  setLocation,
+  setCategory,
+  category,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [location, setLocation] = useState("Select Location");
-  const [category, setCategory] = useState("Select Category");
 
   // Immediately update debounced search term
   useEffect(() => {
@@ -27,20 +29,36 @@ const JobSearchBar = ({
       const locationLower = location.toLowerCase();
       const categoryLower = category.toLowerCase();
 
-      // Search term matching
-      const searchMatch = 
+      // Helper function to extract numeric values from salary string
+      const extractSalaryRange = (salary) => {
+        const regex = /\$([\d,]+)K/g;
+        const matches = [...salary.matchAll(regex)];
+        return matches.map((match) => parseInt(match[1].replace(",", ""), 10)); // Extracts numbers like 150, 210
+      };
+
+      // Search term matching (including salary range)
+      const searchMatch =
         job?.position?.toLowerCase().includes(searchTermLower) ||
         job?.company?.toLowerCase().includes(searchTermLower) ||
         job?.location?.toLowerCase().includes(searchTermLower) ||
-        job?.level?.toLowerCase().includes(searchTermLower);
+        job?.level?.toLowerCase().includes(searchTermLower) ||
+        (job?.salary &&
+          extractSalaryRange(job.salary).some((range, index, array) => {
+            // Check if search term matches any range within the salary bounds
+            const lowerBound = array[0];
+            const upperBound = array[1];
+            const searchNumber = parseInt(searchTerm, 10); // Convert search term to number
+
+            return searchNumber >= lowerBound && searchNumber <= upperBound;
+          }));
 
       // Location matching
-      const locationMatch = 
+      const locationMatch =
         location === "Select Location" ||
         job?.location?.toLowerCase() === locationLower;
 
       // Category matching
-      const categoryMatch = 
+      const categoryMatch =
         category === "Select Category" ||
         job?.level?.toLowerCase() === categoryLower;
 
@@ -48,7 +66,7 @@ const JobSearchBar = ({
       if (searchTerm === "") {
         return locationMatch && categoryMatch;
       }
-      
+
       // If search has content, use all filters
       return searchMatch && locationMatch && categoryMatch;
     });
@@ -145,7 +163,7 @@ const JobSearchBar = ({
           {/* Reset Button */}
           <div className="md:col-span-4 relative group w-full">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl opacity-75 group-hover:opacity-100 animate-pulse"></div>
-            <button 
+            <button
               onClick={resetFilters}
               className="relative w-full py-3 bg-black text-white rounded-xl hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-500 transition duration-300 flex items-center justify-center space-x-2"
             >

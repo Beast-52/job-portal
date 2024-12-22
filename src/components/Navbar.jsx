@@ -43,11 +43,11 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
   useEffect(() => {
     const scroll = () => {
       if (window.scrollY > 10) {
-        navRef.current?.classList.add("scrolled");
-        navRef.current?.classList.remove("transparent");
+        subNavRef.current?.classList.add("scrolled");
+        subNavRef.current?.classList.remove("transparent");
       } else {
-        navRef.current?.classList.add("transparent");
-        navRef.current?.classList.remove("scrolled");
+        subNavRef.current?.classList.add("transparent");
+        subNavRef.current?.classList.remove("scrolled");
       }
     };
 
