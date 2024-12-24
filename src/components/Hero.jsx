@@ -20,7 +20,7 @@ const Hero = () => {
       <h1 className="md:text-8xl text-[7vw] md:w-[62vw] font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 capitalize">
         Find A Job that You Deserve
       </h1>
-      <p className="w-[62vw] text-zinc-300 text-center">
+      <p className="w-[62vw] text-[0.9vmax] text-zinc-300 text-center">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil expedita
         tenetur consectetur blanditiis pariatur praesentium vitae corrupti
         cupiditate rerum? Eius harum eveniet officia ea, perferendis dignissimos

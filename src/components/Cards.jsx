@@ -5,7 +5,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const JobCards = ({
+const JobCardsComponent = ({
   setLocations,
   setCat,
   jobCards,
@@ -30,22 +30,20 @@ const JobCards = ({
     setPos(() => [...new Set(jobCards.map((job) => job.position))]);
   }, [jobCards, setLocations, setCat, setPos]);
 
-  const cardsToRender = filteredCards?.length > 0 ? filteredCards : jobCards;
-
-  // Filter job cards by location and category
-  const filteredJobs = cardsToRender.filter((job) => {
-    const locationMatch =
-      location === "Select Location" || job.location === location;
-    const categoryMatch =
-      category === "Select Category" || job.level === category;
-    return locationMatch && categoryMatch;
-  });
-
-  // Filter jobs by level after location and category are applied
-  const levelsToRender = levels.filter((level) =>
+  if (
+    location !== "Select Location" ||
+    category !== "Select Category" ||
+    debouncedSearchTerm !== ""
+  ) {
+    var filteredJobs = filteredCards;
+    
+  } else {
+    filteredJobs = jobCards;
+  
+  }
+  var levelsToRender = levels.filter((level) =>
     filteredJobs.some((job) => job.level === level)
   );
-
   return (
     <div className="min-h-screen bg-[#121212] py-8 sm:py-12 md:py-16">
       <div className="mx-auto w-full px-4 sm:px-6 md:px-8 lg:max-w-7xl">
@@ -53,7 +51,7 @@ const JobCards = ({
           Explore Exciting Opportunities
         </h1>
 
-        {filteredJobs.length === 0 ? (
+        {filteredJobs?.length === 0 ? (
           <div className="text-center text-white mt-8">
             <p>No jobs found matching your search criteria.</p>
           </div>
@@ -259,4 +257,4 @@ const JobCards = ({
   );
 };
 
-export default JobCards;
+export default JobCardsComponent;

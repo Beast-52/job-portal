@@ -61,7 +61,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
   return (
     <nav
       ref={navRef}
-      className={`fixed w-full top-0 left-0 z-50 transition-transform duration-300 ${
+      className={`fixed w-full top-0 left-0 z-[999999] transition-transform duration-300 ${
         isScrolledUp ? "translate-y-0" : "-translate-y-full"
       }`}
     >

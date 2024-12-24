@@ -9,6 +9,7 @@ import {
   ArrowUp,
 } from "lucide-react";
 import Button from "./partials/Button";
+import { toast } from "react-toastify";
 
 const JobPortalFooter = () => {
   const [scrollPercentage, setScrollPercentage] = useState(0);
@@ -153,6 +154,7 @@ const JobPortalFooter = () => {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setEmail('')
+                      toast.success('Email Submitted Successfully')
                     }
                   }}
                   placeholder="Enter your email"
@@ -186,10 +188,10 @@ const JobPortalFooter = () => {
       <a
         id="arr"
         href="#top"
-        className="text-white hidden grid z-[99] shadow-lg place-items-center fixed bottom-5 right-5 bg-black w-10 h-10 rounded-full  animate-pulse"
+        className="text-white hidden grid z-[99] shadow-lg place-items-center fixed bottom-[9%] right-5 bg-black w-10 h-10 rounded-full  animate-pulse"
       >
         <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
-        <ArrowUp className="bg-black z-[9999] h-[2.45rem] w-[2.45rem] rounded-full px-2" />
+        <ArrowUp className="bg-black z-[999] h-[2.45rem] w-[2.45rem] rounded-full px-2" />
       </a>
     </footer>
   );

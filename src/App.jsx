@@ -11,6 +11,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import FeaturedSection from "./components/FeaturedCards";
 import Button from "./components/partials/Button";
+import { ToastContainer } from "react-toastify";
+import JobCardsComponent from "./components/Cards";
 
 function App() {
   const [locations, setLocations] = useState(null);
@@ -301,7 +303,7 @@ function App() {
         category={category}
         setDebouncedSearchTerm={setDebouncedSearchTerm}
       />
-      <JobCards
+      <JobCardsComponent
         setLocations={setLocations}
         filteredCards={filteredCards}
         setCat={setCat}
@@ -313,6 +315,7 @@ function App() {
       />
       <FeaturedSection featuredImg={featuredImg} />
       <JobPortalFooter />
+      <ToastContainer />
     </div>
   );
 }
